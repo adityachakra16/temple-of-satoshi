@@ -1,0 +1,6 @@
+**/*.sqlite
+**/*.env
+node_modules/
+*.wasm
+.vscode
+*error.log
