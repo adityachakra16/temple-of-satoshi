@@ -1,4 +1,4 @@
-import { KeyPurpose, SignatureScheme, StackrConfig } from "@stackr/sdk";
+import { DA, KeyPurpose, SignatureScheme, StackrConfig } from "@stackr/sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -32,6 +32,7 @@ const stackrConfig: StackrConfig = {
     uri: process.env.DATABASE_URI as string,
   },
   registryContract: process.env.REGISTRY_CONTRACT as string,
+  preferredDA: DA.AVAIL,
   logLevel: "log",
 };
 
