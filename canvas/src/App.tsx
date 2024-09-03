@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { Sky, PointerLockControls, KeyboardControls } from "@react-three/drei";
+import { Sky, KeyboardControls } from "@react-three/drei";
 import { Ground } from "./components/Ground";
 import { Physics } from "@react-three/rapier";
 import { Character } from "./components/Character";
+import { Camera } from "./components/Camera";
 
 function App() {
+  const characterRef = useRef();
+
   return (
     <div className="App">
       <KeyboardControls
@@ -18,21 +21,9 @@ function App() {
           { name: "jump", keys: ["Space"] },
         ]}
       >
-        <Canvas
-          shadows
-          camera={{ fov: 45, position: [0, 10, 10] }}
-          style={{
-            width: "100vw",
-            height: "100vh",
-          }}
-        >
-          {/* Skybox for a natural-looking environment */}
+        <Canvas shadows style={{ width: "100vw", height: "100vh" }}>
           <Sky sunPosition={[100, 20, 100]} />
-
-          {/* Ambient light for general illumination */}
           <ambientLight intensity={0.4} />
-
-          {/* Directional light acting like sunlight */}
           <directionalLight
             castShadow
             intensity={0.8}
@@ -46,17 +37,12 @@ function App() {
             shadow-camera-bottom={-200}
           />
 
-          {/* Point light for additional highlights */}
-          <pointLight castShadow intensity={0.8} position={[50, 100, 50]} />
-
-          {/* Physics and scene objects */}
           <Physics gravity={[0, -30, 0]}>
             <Ground />
-            <Character />
+            <Character ref={characterRef} />
           </Physics>
 
-          {/* Camera control for FPS-style movement */}
-          <PointerLockControls />
+          <Camera characterRef={characterRef} />
         </Canvas>
       </KeyboardControls>
     </div>

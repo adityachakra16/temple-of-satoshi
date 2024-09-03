@@ -1,14 +1,69 @@
-import React, { useRef } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
-import { SkinnedMesh } from "three";
+import React, { useRef, useState } from "react";
+import { useGLTF, useAnimations, useKeyboardControls } from "@react-three/drei";
+import { AnimationAction, SkinnedMesh, Vector3 } from "three";
+import { useFrame } from "@react-three/fiber";
 
-export function Character(props: any) {
-  const group = useRef();
+export const Character = React.forwardRef((props, ref) => {
+  const group = useRef() as any;
   const { nodes, materials, animations } = useGLTF("/Man.glb");
   const { actions } = useAnimations(animations, group);
+  console.log({ actions });
+
+  const [velocity] = useState(() => new Vector3());
+  const [sub, get] = useKeyboardControls() as any;
+  const [currentAction, setCurrentAction] = useState<AnimationAction | null>(
+    null
+  );
+
+  const playAction = (actionName: string) => {
+    if (currentAction === actions[actionName]) return;
+
+    if (currentAction) {
+      currentAction.fadeOut(0.2); // Smooth transition between actions
+    }
+
+    const newAction = actions[actionName] as AnimationAction;
+    newAction.reset().fadeIn(0.2).play();
+    setCurrentAction(newAction);
+  };
+
+  useFrame(() => {
+    if (!group.current) return;
+    const controls = get();
+
+    if (
+      controls.forward ||
+      controls.backward ||
+      controls.left ||
+      controls.right
+    ) {
+      console.log("controls", controls);
+    }
+    const direction = new Vector3(
+      controls.forward ? 1 : controls.backward ? -1 : 0,
+      0,
+      controls.left ? 1 : controls.right ? -1 : 0
+    );
+
+    direction.normalize().multiplyScalar(0.1);
+    velocity.lerp(direction, 0.1);
+    (group.current as any).position.add(velocity);
+
+    if (direction.length() > 0) {
+      if (velocity.length() > 0.08) {
+        playAction("HumanArmature|Man_Run");
+      } else {
+        playAction("HumanArmature|Man_Walk");
+      }
+      group.current.rotation.y = Math.atan2(direction.x, direction.z);
+    } else {
+      playAction("HumanArmature|Man_Idle"); // Idle animation when not moving
+    }
+  });
+
   return (
-    <group ref={group} {...props} dispose={null}>
-      <group name="Root_Scene">
+    <group ref={ref as any} {...props} dispose={null}>
+      <group ref={group} name="Root_Scene">
         <group name="RootNode">
           <group
             name="HumanArmature"
@@ -59,6 +114,5 @@ export function Character(props: any) {
       </group>
     </group>
   );
-}
-
+});
 useGLTF.preload("/Man.glb");
