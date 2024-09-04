@@ -168,7 +168,7 @@ export const CharacterController = () => {
         <group ref={cameraTarget} position-z={1.5} />
         <group ref={cameraPosition} position-y={4} position-z={-4} />
         <group ref={character}>
-          <Character scale={2} position-y={-0.25} animation={animation} />
+          <Character scale={2} position-y={-0.1} animation={animation} />
         </group>
       </group>
       <CapsuleCollider args={[0.08, 0.15]} />

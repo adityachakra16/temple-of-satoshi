@@ -6,6 +6,11 @@ import { Ground } from "./components/Ground";
 import { Physics } from "@react-three/rapier";
 import { Character } from "./components/Character";
 import { Camera } from "./components/Camera";
+import { Path } from "./components/Path";
+import { CharacterController } from "./components/CharacterController";
+import { Jewel } from "./components/Jewel";
+import { Barrier } from "./components/Barrier";
+import { MagicStone } from "./components/MagicStone";
 
 function App() {
   const characterRef = useRef();
@@ -38,8 +43,12 @@ function App() {
           />
 
           <Physics gravity={[0, -30, 0]}>
+            <Path />
             <Ground />
-            <Character ref={characterRef} />
+            <CharacterController />
+            <Jewel />
+            <Barrier />
+            <MagicStone />
           </Physics>
 
           <Camera characterRef={characterRef} />

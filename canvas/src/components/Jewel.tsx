@@ -5,7 +5,7 @@ import { useGLTF } from "@react-three/drei";
 export function Jewel(props) {
   const { nodes, materials } = useGLTF("/Jewel.glb");
   return (
-    <group position={[90, 0, 90]} {...props} dispose={null}>
+    <group position={[90, 2, 90]} scale={0.5} {...props} dispose={null}>
       <mesh
         castShadow
         receiveShadow

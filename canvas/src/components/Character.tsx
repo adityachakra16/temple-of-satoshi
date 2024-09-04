@@ -6,7 +6,6 @@ export function Character({ animation, ...props }: any) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("/Adventurer.glb");
   const { actions } = useAnimations(animations, group);
-  console.log({ actions });
   useEffect(() => {
     if (!animation) return;
     actions[animation]?.reset().fadeIn(0.24).play();
