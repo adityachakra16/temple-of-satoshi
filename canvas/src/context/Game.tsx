@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 type MapType = {
   start: [number, number];
@@ -14,6 +14,8 @@ interface GameContextType {
   currentLevel: number;
   setCurrentLevel: (level: number) => void;
   map: MapType;
+  visibleBarriers: boolean[];
+  setVisibleBarriers: (visibleBarriers: boolean[]) => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -22,6 +24,7 @@ export const GameProvider = ({ children }: any) => {
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(1);
   const [map, setMap] = useState({} as MapType);
+  const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
 
   // Create an array of 5 refs
 
@@ -30,7 +33,8 @@ export const GameProvider = ({ children }: any) => {
       start: [0, 0],
       end: [9, 9],
       barriers: [
-        [4, 5],
+        // [4, 5],
+        [2, 2],
         [7, 7],
       ],
       stones: [
@@ -51,14 +55,15 @@ export const GameProvider = ({ children }: any) => {
         [5, 5],
         [6, 5],
         [6, 6],
-        [7, 6],
-        [7, 7],
-        [8, 7],
+        [6, 7],
+        [6, 8],
+        [7, 8],
         [8, 8],
         [9, 8],
         [9, 9],
       ],
     });
+    setVisibleBarriers([true, true]);
   };
 
   useEffect(() => {
@@ -73,6 +78,8 @@ export const GameProvider = ({ children }: any) => {
         currentLevel,
         setCurrentLevel,
         map,
+        visibleBarriers,
+        setVisibleBarriers,
       }}
     >
       {children}

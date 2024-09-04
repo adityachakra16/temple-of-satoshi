@@ -11,12 +11,12 @@ export function MagicStone({
   position = new Vector3(0, 0, 0),
   radius = 1,
   onCharacterStep,
+  onCharacterExit,
 }) {
   const [color, setColor] = useState("lightgreen");
   const circleRef = useRef();
 
   const onCollisionEnter = ({ other }: any) => {
-    console.log(other);
     if (other.rigidBody && onCharacterStep) {
       setColor("darkgreen");
       onCharacterStep();
@@ -26,6 +26,7 @@ export function MagicStone({
   const onCollisionExit = ({ other }: any) => {
     if (other.rigidBody) {
       setColor("lightgreen");
+      if (onCharacterExit) onCharacterExit();
     }
   };
 
@@ -48,18 +49,33 @@ export function MagicStone({
 
 export function MagicStones({ onCharacterStep }: any) {
   const gameContext = useContext(GameContext);
-  const { map } = gameContext;
 
-  if (!map?.stones) return <></>;
+  if (!gameContext?.map?.stones) return <></>;
+
+  const { setVisibleBarriers } = gameContext;
 
   return (
     <>
-      {map.stones.map((s, i) => {
+      {gameContext?.map.stones.map((s, i) => {
         return (
           <MagicStone
             position={new Vector3(s[0] * 10, 0.2, s[1] * 10)}
             radius={3}
-            onCharacterStep={() => onCharacterStep(i)}
+            onCharacterStep={() => {
+              setVisibleBarriers((prev) => {
+                const newBarriers = [...prev];
+                newBarriers[i] = false;
+                return newBarriers;
+              });
+              onCharacterStep(i);
+            }}
+            onCharacterExit={() => {
+              setVisibleBarriers((prev) => {
+                const newBarriers = [...prev];
+                newBarriers[i] = true;
+                return newBarriers;
+              });
+            }}
           />
         );
       })}
