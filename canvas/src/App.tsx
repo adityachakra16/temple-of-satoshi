@@ -9,8 +9,8 @@ import { Camera } from "./components/Camera";
 import { Path } from "./components/Path";
 import { CharacterController } from "./components/CharacterController";
 import { Jewel } from "./components/Jewel";
-import { Barrier } from "./components/Barrier";
-import { MagicStone } from "./components/MagicStone";
+import { Barrier, Barriers } from "./components/Barrier";
+import { MagicStone, MagicStones } from "./components/MagicStone";
 import { Perf } from "r3f-perf";
 import { GameProvider } from "./context/Game";
 
@@ -52,8 +52,12 @@ function App() {
               <Ground />
               <CharacterController />
               <Jewel />
-              <Barrier />
-              <MagicStone />
+              <Barriers />
+              <MagicStones
+                onCharacterStep={() => {
+                  console.log("character stepped!!!");
+                }}
+              />
             </Physics>
 
             <Camera characterRef={characterRef} />
