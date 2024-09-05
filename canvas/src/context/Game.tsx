@@ -16,10 +16,29 @@ interface GameContextType {
   map: MapType;
   visibleBarriers: boolean[];
   setVisibleBarriers: (visibleBarriers: boolean[]) => void;
-  gameState: "notStarted" | "playing" | "won" | "lost" | "completedLevel";
+  gameState:
+    | "notStarted"
+    | "playing"
+    | "won"
+    | "lost"
+    | "completedLevel"
+    | "leaderboard";
   setGameState: (
-    gameState: "notStarted" | "playing" | "won" | "lost" | "completedLevel"
+    gameState:
+      | "notStarted"
+      | "playing"
+      | "won"
+      | "lost"
+      | "completedLevel"
+      | "leaderboard"
   ) => void;
+  respawn: () => void;
+  characterPositions: [number, number][][];
+  setCharacterPositions: (positions: [number, number][][]) => void;
+  respawnIndex: number;
+  setRespawnIndex: (index: number) => void;
+  respawnTimer: number;
+  setRespawnTimer: (timer: number) => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -30,9 +49,15 @@ export const GameProvider = ({ children }: any) => {
   const [map, setMap] = useState({} as MapType);
   const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
   const [gameState, setGameState] = useState<
-    "notStarted" | "playing" | "won" | "lost" | "completedLevel"
+    "notStarted" | "playing" | "won" | "lost" | "completedLevel" | "leaderboard"
   >("notStarted");
-  // Create an array of 5 refs
+
+  // Positions of all the respawning characters
+  const [characterPositions, setCharacterPositions] = useState<
+    [number, number][][]
+  >([]);
+  const [respawnIndex, setRespawnIndex] = useState(0);
+  const [respawnTimer, setRespawnTimer] = useState(10);
 
   const fetchMap = () => {
     setMap({
@@ -72,9 +97,25 @@ export const GameProvider = ({ children }: any) => {
     setVisibleBarriers([true, true]);
   };
 
+  const respawn = () => {
+    // Reset the player position
+    // Reset the timer
+    setRespawnIndex((prev) => prev + 1);
+    setRespawnTimer(0);
+  };
+
   useEffect(() => {
     fetchMap();
   }, [currentLevel]);
+
+  useEffect(() => {
+    if (respawnTimer > 0) {
+      const timer = setTimeout(() => setRespawnTimer(respawnTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      respawn();
+    }
+  }, [respawnTimer]);
 
   return (
     <GameContext.Provider
@@ -88,6 +129,13 @@ export const GameProvider = ({ children }: any) => {
         setVisibleBarriers,
         gameState,
         setGameState,
+        respawn,
+        characterPositions,
+        setCharacterPositions,
+        respawnIndex,
+        setRespawnIndex,
+        respawnTimer,
+        setRespawnTimer,
       }}
     >
       {children}
