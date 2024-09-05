@@ -16,6 +16,10 @@ interface GameContextType {
   map: MapType;
   visibleBarriers: boolean[];
   setVisibleBarriers: (visibleBarriers: boolean[]) => void;
+  gameState: "notStarted" | "playing" | "won" | "lost" | "completedLevel";
+  setGameState: (
+    gameState: "notStarted" | "playing" | "won" | "lost" | "completedLevel"
+  ) => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -25,7 +29,9 @@ export const GameProvider = ({ children }: any) => {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [map, setMap] = useState({} as MapType);
   const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
-
+  const [gameState, setGameState] = useState<
+    "notStarted" | "playing" | "won" | "lost" | "completedLevel"
+  >("notStarted");
   // Create an array of 5 refs
 
   const fetchMap = () => {
@@ -80,6 +86,8 @@ export const GameProvider = ({ children }: any) => {
         map,
         visibleBarriers,
         setVisibleBarriers,
+        gameState,
+        setGameState,
       }}
     >
       {children}
