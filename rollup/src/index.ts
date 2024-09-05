@@ -21,7 +21,6 @@ const mru = await MicroRollup({
   config: stackrConfig,
   actionSchemas: [StartLevelSchema, EndLevelSchema],
   stateMachines: [machine],
-  stfSchemaMap,
 });
 
 const main = async () => {
