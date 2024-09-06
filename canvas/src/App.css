@@ -1,10 +1,7 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  background: #282c34;
+  height: 100vh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -13,15 +10,17 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+::-webkit-scrollbar {
+  width: 0.5rem; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(97, 96, 97, 0.3); /* Set the color of the scrollbar thumb */
+  border-radius: 10px; /* Set the border radius to make rounded ends */
 }
 
 .App-link {
@@ -35,4 +34,82 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.screen {
+  padding: 4rem;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  color: #282c34; /* Default text color */
+  cursor: pointer;
+  min-width: fit-content;
+  overflow: hidden;
+  position: relative;
+  transition: color 0.3s ease-out;
+  background-size: 400% 400%;
+  border-radius: 1rem; /* Default to normal shape */
+  font-size: 1rem; /* Default to medium size */
+  padding: 0.5rem 1rem; /* Default to medium size */
+  justify-content: center;
+  margin: 36px 14px;
+  border: none;
+}
+
+.button-large {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+}
+
+.button-secondary {
+  background: #313131;
+  color: #fff;
+}
+
+.button-transparent {
+  background: transparent;
+  color: #fff;
+}
+
+.button-secondary:hover {
+  color: #282c34;
+  transition: 1s;
+  background-color: #fff;
+}
+
+.button-transparent:hover {
+  color: #fff;
+  transition: 1s;
+  background-color: #313131;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #282c34;
+  color: #fff;
+}
+
+.text {
+  color: #fff;
+  font-size: 1.2rem;
+  margin: 1rem;
+  text-align: start;
+}
+
+.card {
+  background-color: rgba(97, 96, 97, 0.1);
+  border-radius: 1rem;
+  border: 1px solid rgba(97, 96, 97, 0.3);
+  padding: 1rem;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5), 0px 1px 3px rgba(0, 0, 0, 0.08);
+  color: white;
+  transition: 0.2s ease-in-out;
 }
