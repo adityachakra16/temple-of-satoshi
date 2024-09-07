@@ -12,6 +12,7 @@ import {
   WEB3AUTH_NETWORK,
 } from "@web3auth/base";
 import { WalletProvider } from "./context/Provider";
+import { GlobalProvider } from "./context/Global";
 
 const clientId =
   "BBN9KFWfQcpmnwUVWZ_gKZNei_1KtuPB6x2gK9FBgm3XtspgKhncQYlk01X6WNv33mVZfHqy5c45sCG8abYUUJY"; // get from https://dashboard.web3auth.io
@@ -45,11 +46,13 @@ web3auth.configureAdapter(openloginAdapter);
 function App() {
   return (
     <div className="App">
-      <WalletProvider>
-        <GameProvider>
-          <Experience />
-        </GameProvider>
-      </WalletProvider>
+      <GlobalProvider>
+        <WalletProvider>
+          <GameProvider>
+            <Experience />
+          </GameProvider>
+        </WalletProvider>
+      </GlobalProvider>
     </div>
   );
 }
