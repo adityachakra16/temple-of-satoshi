@@ -148,7 +148,7 @@ const main = async () => {
   app.get("/games", async (_req, res) => {
     const actionsAndBlocks = await mru.actions.query(
       {
-        name: "endGame",
+        name: "endLevel",
         executionStatus: ActionExecutionStatus.ACCEPTED,
         confirmationStatus: [
           ActionConfirmationStatus.C1,
