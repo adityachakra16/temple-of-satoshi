@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { RollupInterface } from "../services/RollupInterface";
 
 type MapType = {
   start: [number, number];
@@ -39,13 +40,18 @@ interface GameContextType {
   setRespawnIndex: (index: number) => void;
   respawnTimer: number;
   setRespawnTimer: (timer: number) => void;
+  currentLevelId: number | null;
+  setCurrentLevelId: (levelId: number | null) => void;
+  startNewLevel: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children }: any) => {
+  const { startLevel, endLevel } = RollupInterface();
   const [score, setScore] = useState(0);
-  const [currentLevel, setCurrentLevel] = useState(1);
+  const [currentLevel, setCurrentLevel] = useState(0);
+  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
   const [map, setMap] = useState({} as MapType);
   const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
   const [gameState, setGameState] = useState<
@@ -104,6 +110,31 @@ export const GameProvider = ({ children }: any) => {
     setRespawnTimer(0);
   };
 
+  const startNewLevel = async () => {
+    if (currentLevel !== 0 && currentLevelId) {
+      const endLevelRes = await endLevel(currentLevelId);
+      if (!endLevelRes) {
+        console.error("Error ending level");
+        return;
+      }
+    }
+
+    const newLevel = currentLevel + 1;
+    const startLevelRes = await startLevel(
+      newLevel,
+      window.innerWidth,
+      window.innerHeight
+    );
+    if (!startLevelRes) {
+      console.error("Error starting level");
+      return;
+    }
+    setRespawnIndex(0);
+    setRespawnTimer(10);
+    setCurrentLevel(newLevel);
+    setCurrentLevelId(startLevelRes.levelId);
+  };
+
   useEffect(() => {
     fetchMap();
   }, [currentLevel]);
@@ -136,6 +167,9 @@ export const GameProvider = ({ children }: any) => {
         setRespawnIndex,
         respawnTimer,
         setRespawnTimer,
+        currentLevelId,
+        setCurrentLevelId,
+        startNewLevel,
       }}
     >
       {children}

@@ -11,7 +11,10 @@ import { MagicStones } from "./MagicStone";
 import { CharacterController } from "./CharacterController";
 import { useContext, useRef } from "react";
 import { GameContext } from "../context/Game";
-import { LoginButton } from "./Login";
+import { LoginPage } from "./Login";
+import { LevelComplete } from "./LevelCompletion";
+import { Leaderboard } from "./Leaderboard";
+import Timer from "./Timer";
 
 export function Experience() {
   const characterRef = useRef();
@@ -21,23 +24,15 @@ export function Experience() {
   if (!gameContext?.map) return <></>;
 
   if (gameContext.gameState === "notStarted") {
-    return (
-      <div className="start-screen">
-        <h1>Find the Magic Stones!</h1>
-        <LoginButton />
-      </div>
-    );
+    return <LoginPage />;
   }
 
   if (gameContext.gameState === "completedLevel") {
-    return (
-      <div className="start-screen">
-        <h1>{`Level {gameContext.currentLevel} Completed!`}</h1>
-        <button onClick={() => gameContext.setGameState("playing")}>
-          Next Level
-        </button>
-      </div>
-    );
+    return <LevelComplete />;
+  }
+
+  if (gameContext.gameState === "leaderboard") {
+    return <Leaderboard />;
   }
 
   return (
@@ -80,7 +75,12 @@ export function Experience() {
             }}
           />
         </Physics>
-
+        <Timer
+          duration={60}
+          onTimeUp={() => {
+            gameContext.respawn();
+          }}
+        />
         <Camera characterRef={characterRef} />
       </Canvas>
     </KeyboardControls>

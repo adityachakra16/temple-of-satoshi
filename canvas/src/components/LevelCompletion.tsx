@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import { GameContext } from "../context/Game";
-import { endLevel, startLevel } from "../services/RollupInterface";
+import { RollupInterface } from "../services/RollupInterface";
 
 export function LevelComplete(props: any) {
   const gameContext = useContext(GameContext);
-
+  const { endLevel, startLevel } = RollupInterface();
   if (!gameContext?.map) return <></>;
 
   return (
@@ -27,22 +27,7 @@ export function LevelComplete(props: any) {
           <button
             className="button button-large"
             onClick={async () => {
-              const endedRes = await endLevel(gameContext.currentLevel);
-              if (!endedRes) {
-                console.error("Error ending level");
-                return;
-              }
-
-              await startLevel(
-                Date.now(),
-                gameContext.currentLevel + 1,
-                window.innerWidth,
-                window.innerHeight,
-                "signature",
-                "sender"
-              );
-              gameContext.setCurrentLevel(gameContext.currentLevel + 1);
-              gameContext.setGameState("playing");
+              await gameContext.startNewLevel();
             }}
           >
             Next Level

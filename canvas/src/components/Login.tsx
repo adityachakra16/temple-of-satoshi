@@ -1,20 +1,15 @@
-import {
-  CHAIN_NAMESPACES,
-  IProvider,
-  WALLET_ADAPTERS,
-  UX_MODE,
-  WEB3AUTH_NETWORK,
-} from "@web3auth/base";
+import { WALLET_ADAPTERS } from "@web3auth/base";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { WalletContext } from "../context/Provider";
 import { web3auth } from "../App";
 import { GameContext } from "../context/Game";
+import { RollupInterface } from "../services/RollupInterface";
 
 export function LoginPage() {
   const walletContext = useContext(WalletContext);
   const gameContext = useContext(GameContext);
-
+  const { startLevel } = RollupInterface();
   useEffect(() => {
     if (!walletContext) return;
     const init = async () => {
@@ -57,6 +52,7 @@ export function LoginPage() {
       console.log("Logged in");
       setLoggedIn(true);
       setGameState("playing");
+      await gameContext.startNewLevel();
     }
   };
 

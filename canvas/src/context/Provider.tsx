@@ -1,6 +1,7 @@
 import { IProvider } from "@web3auth/base";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { web3auth } from "../App";
+import { ethers } from "ethers";
 
 interface WalletContextType {
   provider: IProvider | null;
@@ -9,6 +10,11 @@ interface WalletContextType {
   setLoggedIn: (loggedIn: boolean) => void;
   getUserInfo: () => Promise<any>;
   logout: () => Promise<void>;
+  signMessage: (
+    domain: any,
+    types: any,
+    message: any
+  ) => Promise<string | null>;
 }
 
 export const WalletContext = createContext<WalletContextType | null>(null);
@@ -29,6 +35,16 @@ export const WalletProvider = ({ children }: any) => {
     console.log("Logged out");
   };
 
+  const signMessage = async (domain: any, types: any, message: any) => {
+    if (!provider) return null;
+
+    const ethersProvider = new ethers.BrowserProvider(provider);
+    const signer = await ethersProvider.getSigner();
+
+    const signedMessage = await signer.signTypedData(domain, types, message);
+    return signedMessage;
+  };
+
   return (
     <WalletContext.Provider
       value={{
@@ -38,6 +54,7 @@ export const WalletProvider = ({ children }: any) => {
         setLoggedIn,
         getUserInfo,
         logout,
+        signMessage,
       }}
     >
       {children}
