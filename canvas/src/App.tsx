@@ -14,6 +14,7 @@ import {
 import { WalletProvider } from "./context/Provider";
 import { GlobalProvider } from "./context/Global";
 import Timer from "./components/Timer";
+import LogoutButton from "./components/Logout";
 
 const clientId =
   "BBN9KFWfQcpmnwUVWZ_gKZNei_1KtuPB6x2gK9FBgm3XtspgKhncQYlk01X6WNv33mVZfHqy5c45sCG8abYUUJY"; // get from https://dashboard.web3auth.io
@@ -52,6 +53,7 @@ function App() {
           <GameProvider>
             <Experience />
             <Timer />
+            <LogoutButton onLogout={() => {}} />
           </GameProvider>
         </WalletProvider>
       </GlobalProvider>

@@ -19,7 +19,7 @@ export function LoginPage() {
 
         if (web3auth.connected) {
           setLoggedIn(true);
-          setGameState("notStarted");
+          setGameState("playing");
         }
       } catch (error) {
         console.error(error);
