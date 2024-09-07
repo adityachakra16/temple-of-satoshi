@@ -9,7 +9,7 @@ export const StartLevelSchema = new ActionSchema("startLevel", {
 });
 
 export const EndLevelSchema = new ActionSchema("endLevel", {
-  levelId: SolidityType.UINT,
+  levelId: SolidityType.STRING,
   timestamp: SolidityType.UINT,
   gameInputs: SolidityType.STRING,
 });

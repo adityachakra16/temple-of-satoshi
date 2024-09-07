@@ -13,8 +13,8 @@ import { machine, MACHINE_ID } from "./stackr/machine";
 const PORT = process.env.PORT || 3210;
 
 const stfSchemaMap: Record<string, ActionSchema> = {
-  startGame: StartLevelSchema,
-  endGame: EndLevelSchema,
+  startLevel: StartLevelSchema,
+  endLevel: EndLevelSchema,
 };
 
 const mru = await MicroRollup({
@@ -99,6 +99,7 @@ const main = async () => {
     schema: ActionSchema,
     payload: any
   ) => {
+    console.log({ transition, schema, payload });
     const action = schema.actionFrom(payload);
     const ack = await mru.submitAction(transition, action);
     const { logs, errors } = await ack.waitFor(ActionConfirmationStatus.C1);
@@ -110,6 +111,8 @@ const main = async () => {
 
   app.post("/:transition", async (req, res) => {
     const { transition } = req.params;
+
+    console.log({ stfSchemaMap, transition });
     const schema = stfSchemaMap[transition];
 
     const { inputs, signature, msgSender } = req.body;

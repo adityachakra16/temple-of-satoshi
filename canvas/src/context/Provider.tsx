@@ -15,6 +15,7 @@ interface WalletContextType {
     types: any,
     message: any
   ) => Promise<string | null>;
+  getEthAddress: () => Promise<string | null>;
 }
 
 export const WalletContext = createContext<WalletContextType | null>(null);
@@ -45,6 +46,15 @@ export const WalletProvider = ({ children }: any) => {
     return signedMessage;
   };
 
+  const getEthAddress = async () => {
+    if (!provider) return null;
+
+    const ethersProvider = new ethers.BrowserProvider(provider);
+    const signer = await ethersProvider.getSigner();
+    const ethAddress = await signer.getAddress();
+    return ethAddress;
+  };
+
   return (
     <WalletContext.Provider
       value={{
@@ -55,6 +65,7 @@ export const WalletProvider = ({ children }: any) => {
         getUserInfo,
         logout,
         signMessage,
+        getEthAddress,
       }}
     >
       {children}

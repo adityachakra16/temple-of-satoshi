@@ -40,9 +40,10 @@ interface GameContextType {
   setRespawnIndex: (index: number) => void;
   respawnTimer: number;
   setRespawnTimer: (timer: number) => void;
-  currentLevelId: number | null;
-  setCurrentLevelId: (levelId: number | null) => void;
+  currentLevelId: string | null;
+  setCurrentLevelId: (levelId: string | null) => void;
   startNewLevel: () => void;
+  endCurrentLevel: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -51,7 +52,7 @@ export const GameProvider = ({ children }: any) => {
   const { startLevel, endLevel } = RollupInterface();
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(0);
-  const [currentLevelId, setCurrentLevelId] = useState<number | null>(null);
+  const [currentLevelId, setCurrentLevelId] = useState<string | null>(null);
   const [map, setMap] = useState({} as MapType);
   const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
   const [gameState, setGameState] = useState<
@@ -110,21 +111,26 @@ export const GameProvider = ({ children }: any) => {
     setRespawnTimer(0);
   };
 
-  const startNewLevel = async () => {
-    if (currentLevel !== 0 && currentLevelId) {
-      const endLevelRes = await endLevel(currentLevelId);
-      if (!endLevelRes) {
-        console.error("Error ending level");
-        return;
-      }
-    }
+  const endCurrentLevel = async () => {
+    setGameState("completedLevel");
+    if (!currentLevelId) return;
+    console.log("Ending level", currentLevelId);
 
+    const endLevelRes = await endLevel(currentLevelId);
+    if (!endLevelRes) {
+      console.error("Error ending level");
+      return;
+    }
+  };
+
+  const startNewLevel = async () => {
     const newLevel = currentLevel + 1;
     const startLevelRes = await startLevel(
       newLevel,
       window.innerWidth,
       window.innerHeight
     );
+    console.log({ startLevelRes });
     if (!startLevelRes) {
       console.error("Error starting level");
       return;
@@ -133,6 +139,7 @@ export const GameProvider = ({ children }: any) => {
     setRespawnTimer(10);
     setCurrentLevel(newLevel);
     setCurrentLevelId(startLevelRes.levelId);
+    setGameState("playing");
   };
 
   useEffect(() => {
@@ -170,6 +177,7 @@ export const GameProvider = ({ children }: any) => {
         currentLevelId,
         setCurrentLevelId,
         startNewLevel,
+        endCurrentLevel,
       }}
     >
       {children}

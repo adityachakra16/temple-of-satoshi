@@ -29,33 +29,36 @@ export const RollupInterface = () => {
 
       const domain = mruInfo.domain;
       const types = mruInfo.schemas[transition].types;
-      const userInfo = await walletContext.getUserInfo();
-      console.log({ userInfo });
-      const ethAddress = userInfo?.ethAddress;
-
-      const ethersProvider = new ethers.BrowserProvider(provider as IProvider);
-      const signer = await ethersProvider.getSigner();
-
-      const signedMessage = await signer.signTypedData(domain, types, inputs);
-
-      console.log({ signedMessage });
-      // const res = await fetch(`http://localhost:3210/${transition}`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     transition,
-      //     inputs,
-      //     signature: signature,
-      //     msgSender:  ethAddress,
-      //   }),
-      // });
-      // console.log({ res });
-      // const data = await res.json();
-
-      // return data;
-      return { isOk: true, levelId: 1 };
+      console.log({
+        domain,
+        types,
+        inputs,
+      });
+      const signedMessage = await walletContext.signMessage(
+        domain,
+        types,
+        inputs
+      );
+      const ethAddress = await walletContext.getEthAddress();
+      console.log({ signedMessage, ethAddress });
+      const res = await fetch(`http://localhost:3210/${transition}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          transition,
+          inputs,
+          signature: signedMessage,
+          msgSender: ethAddress,
+        }),
+      });
+      console.log({ res });
+      const data = await res.json();
+      if (data.isOk)
+        // return data;
+        return data.logs;
+      else return false;
     } catch (error) {
       console.error(error);
     }
@@ -70,21 +73,25 @@ export const RollupInterface = () => {
         width,
         height,
       });
-      console.log({ res });
 
-      return res;
+      if (res) {
+        return {
+          levelId: res[0].value,
+        };
+      }
+      return false;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const endLevel = async (levelId: number) => {
+  const endLevel = async (levelId: string) => {
     try {
       const timestamp = Date.now();
-      const gameInputs = {
+      const gameInputs = JSON.stringify({
         timestamp,
         levelId,
-      };
+      });
       const res = await submitAction("endLevel", {
         timestamp,
         levelId,
