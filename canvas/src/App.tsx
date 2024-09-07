@@ -13,6 +13,7 @@ import {
 } from "@web3auth/base";
 import { WalletProvider } from "./context/Provider";
 import { GlobalProvider } from "./context/Global";
+import Timer from "./components/Timer";
 
 const clientId =
   "BBN9KFWfQcpmnwUVWZ_gKZNei_1KtuPB6x2gK9FBgm3XtspgKhncQYlk01X6WNv33mVZfHqy5c45sCG8abYUUJY"; // get from https://dashboard.web3auth.io
@@ -50,6 +51,7 @@ function App() {
         <WalletProvider>
           <GameProvider>
             <Experience />
+            <Timer />
           </GameProvider>
         </WalletProvider>
       </GlobalProvider>
