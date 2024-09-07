@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../context/Game";
-import { fetchLeaderboard } from "../services/RollupInterface";
+import { RollupInterface } from "../services/RollupInterface";
 
 const mockLeaderboard = [
   { name: "Alice", score: 100 },
@@ -17,6 +17,7 @@ const mockLeaderboard = [
 
 export function Leaderboard(props: any) {
   const gameContext = useContext(GameContext);
+  const { fetchLeaderboard } = RollupInterface();
   const [topThree, setTopThree] = useState<
     {
       name: string;

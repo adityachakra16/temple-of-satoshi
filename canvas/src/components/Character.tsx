@@ -8,10 +8,10 @@ export function Character({ animation, ...props }: any) {
   const { actions } = useAnimations(animations, group);
   useEffect(() => {
     if (!animation) return;
-    actions[animation]?.reset().fadeIn(0.24).play();
+    actions[animation]?.reset()?.fadeIn(0.24).play();
 
     return () => {
-      (actions[animation] as AnimationAction).fadeOut(0.24);
+      (actions[animation] as AnimationAction)?.fadeOut(0.24);
     };
   }, [animation]);
 
