@@ -34,8 +34,10 @@ interface GameContextType {
       | "leaderboard"
   ) => void;
   respawn: () => void;
-  characterPositions: [number, number][][];
-  setCharacterPositions: (positions: [number, number][][]) => void;
+  characterMovements: [number, number, number, number][][]; // forward, backward, left, right
+  setCharacterMovements: (
+    movement: [number, number, number, number][][]
+  ) => void;
   respawnIndex: number;
   setRespawnIndex: (index: number) => void;
   respawnTimer: number;
@@ -44,6 +46,9 @@ interface GameContextType {
   setCurrentLevelId: (levelId: string | null) => void;
   startNewLevel: () => void;
   endCurrentLevel: () => void;
+  recordCharacterMovements: (
+    movement: [number, number, number, number]
+  ) => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -60,8 +65,8 @@ export const GameProvider = ({ children }: any) => {
   >("notStarted");
 
   // Positions of all the respawning characters
-  const [characterPositions, setCharacterPositions] = useState<
-    [number, number][][]
+  const [characterMovements, setCharacterMovements] = useState<
+    [number, number, number, number][][]
   >([]);
   const [respawnIndex, setRespawnIndex] = useState(0);
   const [respawnTimer, setRespawnTimer] = useState(10);
@@ -104,11 +109,24 @@ export const GameProvider = ({ children }: any) => {
     setVisibleBarriers([true, true]);
   };
 
+  // x, z, rotation
+  const recordCharacterMovements = (
+    movement: [number, number, number, number]
+  ) => {
+    console.log("Recording movement", movement);
+    setCharacterMovements((prev) => {
+      const newMovements = prev.slice();
+      newMovements[respawnIndex] = newMovements[respawnIndex] || [];
+      newMovements[respawnIndex].push(movement);
+      return newMovements;
+    });
+  };
+
   const respawn = () => {
     // Reset the player position
     // Reset the timer
     setRespawnIndex((prev) => prev + 1);
-    setRespawnTimer(0);
+    setRespawnTimer(10);
   };
 
   const endCurrentLevel = async () => {
@@ -168,8 +186,8 @@ export const GameProvider = ({ children }: any) => {
         gameState,
         setGameState,
         respawn,
-        characterPositions,
-        setCharacterPositions,
+        characterMovements,
+        setCharacterMovements,
         respawnIndex,
         setRespawnIndex,
         respawnTimer,
@@ -178,6 +196,7 @@ export const GameProvider = ({ children }: any) => {
         setCurrentLevelId,
         startNewLevel,
         endCurrentLevel,
+        recordCharacterMovements,
       }}
     >
       {children}

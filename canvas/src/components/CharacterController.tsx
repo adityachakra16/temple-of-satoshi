@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import { MathUtils, Vector3 } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 import { Character } from "./Character";
+import { GameContext } from "../context/Game";
+import { useContext } from "react";
 
 const normalizeAngle = (angle) => {
   while (angle > Math.PI) angle -= 2 * Math.PI;
@@ -30,6 +32,7 @@ const lerpAngle = (start, end, t) => {
 };
 
 export const CharacterController = () => {
+  const gameContext = useContext(GameContext);
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
     {
@@ -48,7 +51,6 @@ export const CharacterController = () => {
   const character = useRef();
 
   const [animation, setAnimation] = useState("CharacterArmature|Idle");
-
   const characterRotationTarget = useRef(0);
   const rotationTarget = useRef(0);
   const cameraTarget = useRef();
@@ -58,6 +60,15 @@ export const CharacterController = () => {
   const cameraLookAt = useRef(new Vector3());
   const [, get] = useKeyboardControls();
   const isClicking = useRef(false);
+
+  const resetCharacterPosition = () => {
+    rb.current.setTranslation(new Vector3(0, 0.5, 0));
+  };
+
+  useEffect(() => {
+    if (!gameContext.respawnIndex) return;
+    resetCharacterPosition();
+  }, [gameContext?.respawnIndex]);
 
   useEffect(() => {
     const onMouseDown = (e) => {
@@ -159,6 +170,13 @@ export const CharacterController = () => {
 
       camera.lookAt(cameraLookAt.current);
     }
+
+    // gameContext.recordCharacterMovements([
+    //   get().forward ? 1 : 0,
+    //   get().backward ? 1 : 0,
+    //   get().left ? 1 : 0,
+    //   get().right ? 1 : 0,
+    // ]);
   });
 
   return (
