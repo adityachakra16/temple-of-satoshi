@@ -34,6 +34,14 @@ export function LevelComplete(props: any) {
           </button>
           <button
             className="button button-large button-secondary"
+            onClick={async () => {
+              await gameContext.startNewLevel();
+            }}
+          >
+            Start Again
+          </button>
+          <button
+            className="button button-large button-secondary"
             onClick={() => gameContext.setGameState("leaderboard")}
           >
             Leaderboard
