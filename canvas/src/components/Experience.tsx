@@ -18,6 +18,7 @@ import { CharacterSouls } from "./CharacterSoul";
 import { CharacterProvider } from "../context/Character";
 import Timer from "./Timer";
 import { Paused } from "./PausedPage";
+import { Temple } from "./Temple";
 
 export function Experience() {
   const characterRef = useRef();
@@ -71,6 +72,7 @@ export function Experience() {
 
         <Physics gravity={[0, -30, 0]}>
           <Path />
+          <Temple />
           <Ground />
           <Barriers />
 

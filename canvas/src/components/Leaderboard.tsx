@@ -3,16 +3,16 @@ import { GameContext } from "../context/Game";
 import { RollupInterface } from "../services/RollupInterface";
 
 const mockLeaderboard = [
-  { name: "Alice", score: 100 },
-  { name: "Bob", score: 90 },
-  { name: "Charlie", score: 80 },
-  { name: "David", score: 70 },
-  { name: "Eve", score: 60 },
-  { name: "Frank", score: 50 },
-  { name: "Grace", score: 40 },
-  { name: "Hank", score: 30 },
-  { name: "Ivy", score: 20 },
-  { name: "Jill", score: 10 },
+  { player: "Alice", scores: 100 },
+  { player: "Bob", scores: 90 },
+  { player: "Charlie", scores: 80 },
+  { player: "David", scores: 70 },
+  { player: "Eve", scores: 60 },
+  { player: "Frank", scores: 50 },
+  { player: "Grace", scores: 40 },
+  { player: "Hank", scores: 30 },
+  { player: "Ivy", scores: 20 },
+  { player: "Jill", scores: 10 },
 ];
 
 export function Leaderboard(props: any) {
@@ -20,29 +20,36 @@ export function Leaderboard(props: any) {
   const { fetchLeaderboard } = RollupInterface();
   const [topThree, setTopThree] = useState<
     {
-      name: string;
-      score: number;
+      player: string;
+      scores: number;
     }[]
   >([]);
   const [leaderboard, setLeaderboard] = useState<
     {
-      name: string;
-      score: number;
+      player: string;
+      scores: number;
     }[]
   >([]);
+
+  const cutString = (str: string) => {
+    if (str.length > 8) {
+      return `${str.slice(0, 6)}...${str.slice(-6)}`;
+    }
+    return str;
+  };
 
   useEffect(() => {
     void (async () => {
       const leaderboard = await fetchLeaderboard();
       if (!leaderboard) {
         console.error("Error fetching leaderboard");
-        mockLeaderboard.sort((a, b) => b.score - a.score);
-        setLeaderboard(mockLeaderboard.slice(3));
+        mockLeaderboard.sort((a, b) => b.scores - a.scores);
+        setLeaderboard(mockLeaderboard);
         setTopThree(mockLeaderboard.slice(0, 3));
         return;
       }
       setTopThree(leaderboard.slice(0, 3));
-      setLeaderboard(leaderboard.slice(3));
+      setLeaderboard(leaderboard);
     })();
   }, []);
 
@@ -90,8 +97,8 @@ export function Leaderboard(props: any) {
                 }}
               >
                 <div>
-                  <p>{entry.name}</p>
-                  <p>{entry.score}</p>
+                  <p>{cutString(entry.player)}</p>
+                  <p>{entry.scores}</p>
                 </div>
                 <h1>#{index + 1}</h1>
               </div>
@@ -115,8 +122,8 @@ export function Leaderboard(props: any) {
                 justifyContent: "space-between",
               }}
             >
-              <p>{entry.name}</p>
-              <p>{entry.score}</p>
+              <p>{entry.player}</p>
+              <p>{entry.scores}</p>
             </div>
           ))}
         </div>

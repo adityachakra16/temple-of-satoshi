@@ -78,7 +78,6 @@ export function MagicStone({
 
   useFrame(() => {
     checkSoulAndCharacterProximity(); // Manually check soul proximity every frame
-    // checkCharacterProximity(); // Manually check character proximity every frame
   });
 
   return (

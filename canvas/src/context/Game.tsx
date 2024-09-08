@@ -61,8 +61,8 @@ export const GameProvider = ({ children }: any) => {
     | "paused"
   >("notStarted");
 
-  const fetchMap = async () => {
-    const map = await generateMap(currentLevel);
+  const fetchMap = async (level: number) => {
+    const map = await generateMap(level);
     setMap(map);
     setVisibleBarriers(map.barriers.map(() => true));
 
@@ -83,7 +83,7 @@ export const GameProvider = ({ children }: any) => {
 
   const startNewLevel = async () => {
     const newLevel = currentLevel + 1;
-    const generatedMap = await fetchMap();
+    const generatedMap = await fetchMap(newLevel);
     const startLevelRes = await startLevel(
       newLevel,
       window.innerWidth,
@@ -117,7 +117,7 @@ export const GameProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
-    fetchMap();
+    fetchMap(currentLevel);
   }, [currentLevel]);
 
   return (

@@ -183,7 +183,7 @@ const main = async () => {
 
   app.get("/map/:levelId", async (req, res) => {
     const { levelId } = req.params;
-    const map = mockMaps[0];
+    const map = mockMaps[levelId as keyof typeof mockMaps];
     return res.send(map);
   });
 

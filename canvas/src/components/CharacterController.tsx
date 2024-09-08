@@ -38,7 +38,7 @@ export const CharacterController = () => {
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
     {
-      WALK_SPEED: { value: 3.0, min: 0.1, max: 4, step: 0.1 },
+      WALK_SPEED: { value: 7.0, min: 0.1, max: 9, step: 0.1 },
       RUN_SPEED: { value: 9, min: 0.2, max: 12, step: 0.1 },
       ROTATION_SPEED: {
         value: degToRad(0.5),
