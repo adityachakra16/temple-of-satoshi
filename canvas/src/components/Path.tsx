@@ -2,6 +2,11 @@ import { useContext } from "react";
 import { Vector3 } from "three";
 import { GameContext } from "../context/Game";
 import { RigidBody } from "@react-three/rapier";
+import { useTexture } from "@react-three/drei";
+import * as THREE from "three";
+import brickroad from "../assets/Bricks095_1K-JPG_Color.jpg";
+import wood from "../assets/Stylized_Wood_Planks_002_basecolor.png";
+
 const PathSegment = ({
   position,
   rotation,
@@ -12,12 +17,17 @@ const PathSegment = ({
   pathExistsInFront,
   pathExistsBehind,
 }: any) => {
+  const texture = useTexture(brickroad);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
+  const wTexture = useTexture(wood);
+  wTexture.wrapS = wTexture.wrapT = THREE.RepeatWrapping;
   return (
     <group position={position} rotation={[0, rotation, 0]}>
       {/* Path */}
       <mesh>
         <boxGeometry args={[length, 0.2, width]} />
-        <meshStandardMaterial color="gray" />
+        <meshStandardMaterial map={texture} />
       </mesh>
 
       {/* Left Boundary */}
@@ -25,7 +35,7 @@ const PathSegment = ({
         <RigidBody type="static" position={new Vector3(-length / 2, 0.5, 0)}>
           <mesh>
             <boxGeometry args={[0.2, 1, width]} />
-            <meshStandardMaterial color="red" />
+            <meshStandardMaterial map={wTexture} />
           </mesh>
         </RigidBody>
       )}
@@ -35,7 +45,7 @@ const PathSegment = ({
         <RigidBody type="static" position={new Vector3(length / 2, 0.5, 0)}>
           <mesh>
             <boxGeometry args={[0.2, 1, width]} />
-            <meshStandardMaterial color="red" />
+            <meshStandardMaterial map={wTexture} />
           </mesh>
         </RigidBody>
       )}
@@ -45,7 +55,7 @@ const PathSegment = ({
         <RigidBody type="static" position={new Vector3(0, 0.5, width / 2)}>
           <mesh>
             <boxGeometry args={[length, 1, 0.2]} />
-            <meshStandardMaterial color="red" />
+            <meshStandardMaterial map={wTexture} />
           </mesh>
         </RigidBody>
       )}
@@ -55,7 +65,7 @@ const PathSegment = ({
         <RigidBody type="static" position={new Vector3(0, 0.5, -width / 2)}>
           <mesh>
             <boxGeometry args={[length, 1, 0.2]} />
-            <meshStandardMaterial color="red" />
+            <meshStandardMaterial map={wTexture} />
           </mesh>
         </RigidBody>
       )}

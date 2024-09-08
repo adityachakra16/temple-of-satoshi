@@ -9,7 +9,7 @@ import { Vector3 } from "three";
 import { CharacterContext } from "../context/Character";
 
 export function Jewel(props) {
-  const { nodes, materials } = useGLTF("/Jewel.glb");
+  const { nodes, materials } = useGLTF("/Jewel2.glb");
   const gameContext = useContext(GameContext);
   const characterContext = useContext(CharacterContext);
 
@@ -27,10 +27,10 @@ export function Jewel(props) {
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.Jewel_01_Plane.geometry}
-        material={materials.Green_Jewel01}
+        geometry={nodes.UI_Gem_Pink.geometry}
+        material={materials.Atlas}
         position={position}
-        scale={0.5}
+        scale={300}
       />
 
       <BallCollider
