@@ -18,7 +18,7 @@ contract MapGenerationLLM {
             logitBias: "", // empty str for null
             maxTokens: 1000, // 0 for null
             presencePenalty: 21, // > 20 for null
-            responseFormat: "{\"type\":\"text\"}",
+            responseFormat: "{\"type\":\"json_object\"}",
             seed: 0, // null
             stop: "", // null
             temperature: 10, // Example temperature (scaled up, 10 means 1.0), > 20 means null
@@ -65,7 +65,7 @@ contract MapGenerationLLM {
         returns (IOracle.Message memory)
     {
         IOracle.Message memory newMessage = IOracle.Message({role: role, content: new IOracle.Content[](1)});
-        newMessage.content[0].contentType = "text";
+        newMessage.content[0].contentType = "json_object";
         newMessage.content[0].value = content;
         return newMessage;
     }
