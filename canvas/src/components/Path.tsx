@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Vector3 } from "three";
 import { GameContext } from "../context/Game";
+import { RigidBody } from "@react-three/rapier";
 const PathSegment = ({
   position,
   rotation,
@@ -21,34 +22,42 @@ const PathSegment = ({
 
       {/* Left Boundary */}
       {!pathExistsOnLeft && (
-        <mesh position={new Vector3(-length / 2, 0.5, 0)}>
-          <boxGeometry args={[0.2, 1, width]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
+        <RigidBody type="static" position={new Vector3(-length / 2, 0.5, 0)}>
+          <mesh>
+            <boxGeometry args={[0.2, 1, width]} />
+            <meshStandardMaterial color="red" />
+          </mesh>
+        </RigidBody>
       )}
 
       {/* Right Boundary */}
       {!pathExistsOnRight && (
-        <mesh position={new Vector3(length / 2, 0.5, 0)}>
-          <boxGeometry args={[0.2, 1, width]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
+        <RigidBody type="static" position={new Vector3(length / 2, 0.5, 0)}>
+          <mesh>
+            <boxGeometry args={[0.2, 1, width]} />
+            <meshStandardMaterial color="red" />
+          </mesh>
+        </RigidBody>
       )}
 
       {/* Front Boundary */}
       {!pathExistsInFront && (
-        <mesh position={new Vector3(0, 0.5, width / 2)}>
-          <boxGeometry args={[length, 1, 0.2]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
+        <RigidBody type="static" position={new Vector3(0, 0.5, width / 2)}>
+          <mesh>
+            <boxGeometry args={[length, 1, 0.2]} />
+            <meshStandardMaterial color="red" />
+          </mesh>
+        </RigidBody>
       )}
 
       {/* Back Boundary */}
       {!pathExistsBehind && (
-        <mesh position={new Vector3(0, 0.5, -width / 2)}>
-          <boxGeometry args={[length, 1, 0.2]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
+        <RigidBody type="static" position={new Vector3(0, 0.5, -width / 2)}>
+          <mesh>
+            <boxGeometry args={[length, 1, 0.2]} />
+            <meshStandardMaterial color="red" />
+          </mesh>
+        </RigidBody>
       )}
     </group>
   );
