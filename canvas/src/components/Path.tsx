@@ -1,25 +1,16 @@
-import React, { useContext } from "react";
-import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useContext } from "react";
 import { Vector3 } from "three";
 import { GameContext } from "../context/Game";
-
 const PathSegment = ({
   position,
   rotation,
   length,
   width,
-  boundary = "length",
+  pathExistsOnLeft,
+  pathExistsOnRight,
+  pathExistsInFront,
+  pathExistsBehind,
 }: any) => {
-  const leftBoundaryPosition =
-    boundary === "length"
-      ? new Vector3(-length / 2, 0.5, 0)
-      : new Vector3(0, 0.5, -width / 2);
-  const rightBoundaryPosition =
-    boundary === "width"
-      ? new Vector3(length / 2, 0.5, 0)
-      : new Vector3(0, 0.5, width / 2);
-
   return (
     <group position={position} rotation={[0, rotation, 0]}>
       {/* Path */}
@@ -29,20 +20,36 @@ const PathSegment = ({
       </mesh>
 
       {/* Left Boundary */}
-      <mesh position={leftBoundaryPosition}>
-        <boxGeometry
-          args={boundary === "length" ? [0.2, 1, width] : [length, 1, 0.2]}
-        />
-        <meshStandardMaterial color="red" />
-      </mesh>
+      {!pathExistsOnLeft && (
+        <mesh position={new Vector3(-length / 2, 0.5, 0)}>
+          <boxGeometry args={[0.2, 1, width]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      )}
 
       {/* Right Boundary */}
-      <mesh position={rightBoundaryPosition}>
-        <boxGeometry
-          args={boundary === "width" ? [0.2, 1, width] : [length, 1, 0.2]}
-        />
-        <meshStandardMaterial color="red" />
-      </mesh>
+      {!pathExistsOnRight && (
+        <mesh position={new Vector3(length / 2, 0.5, 0)}>
+          <boxGeometry args={[0.2, 1, width]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      )}
+
+      {/* Front Boundary */}
+      {!pathExistsInFront && (
+        <mesh position={new Vector3(0, 0.5, width / 2)}>
+          <boxGeometry args={[length, 1, 0.2]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      )}
+
+      {/* Back Boundary */}
+      {!pathExistsBehind && (
+        <mesh position={new Vector3(0, 0.5, -width / 2)}>
+          <boxGeometry args={[length, 1, 0.2]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
+      )}
     </group>
   );
 };
@@ -58,20 +65,20 @@ export function Path() {
   const length = 10;
   const width = 10;
   for (let i = 0; i < path.length; i++) {
-    // smartly pick if boundary should be along length or width - based on the direction of the path
-
-    // const prevPoint = path[i - 1];
-    // const currPoint = path[i];
-
-    // // Determine the direction of the path segment
-    // const isHorizontal = currPoint[0] !== prevPoint[0];
-    // const boundaryDirection = isHorizontal ? "width" : "length";
     let boundaryDirection = "length";
-    if (i > 0) {
-      const prevPoint = path[i - 1];
-      const currPoint = path[i];
-      boundaryDirection = currPoint[0] !== prevPoint[0] ? "width" : "length";
-    }
+    const currPoint = path[i];
+    const pathExistsOnLeft = path.some(
+      (p) => p[0] === currPoint[0] - 1 && p[1] === currPoint[1]
+    );
+    const pathExistsOnRight = path.some(
+      (p) => p[0] === currPoint[0] + 1 && p[1] === currPoint[1]
+    );
+    const pathExistsInFront = path.some(
+      (p) => p[0] === currPoint[0] && p[1] === currPoint[1] + 1
+    );
+    const pathExistsBehind = path.some(
+      (p) => p[0] === currPoint[0] && p[1] === currPoint[1] - 1
+    );
 
     segments.push(
       <PathSegment
@@ -81,6 +88,10 @@ export function Path() {
         length={length}
         width={width}
         boundary={boundaryDirection}
+        pathExistsOnLeft={pathExistsOnLeft}
+        pathExistsOnRight={pathExistsOnRight}
+        pathExistsInFront={pathExistsInFront}
+        pathExistsBehind={pathExistsBehind}
       />
     );
   }
