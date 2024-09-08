@@ -10,6 +10,7 @@ import { stackrConfig } from "../stackr.config";
 import { StartLevelSchema, EndLevelSchema } from "./stackr/schemas";
 import { machine, MACHINE_ID } from "./stackr/machine";
 import { mockMaps } from "./constants";
+import { generateMap } from "./llmInterface";
 
 const PORT = process.env.PORT || 3210;
 
@@ -183,8 +184,13 @@ const main = async () => {
 
   app.get("/map/:levelId", async (req, res) => {
     const { levelId } = req.params;
-    const map = mockMaps[levelId as keyof typeof mockMaps];
-    return res.send(map);
+    if (process.env.NODE_ENV === "local") {
+      const map = mockMaps[levelId as keyof typeof mockMaps];
+      return res.send(map);
+    } else {
+      const map = generateMap();
+      return res.send(map);
+    }
   });
 
   app.listen(PORT, () => {
