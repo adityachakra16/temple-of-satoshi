@@ -59,6 +59,7 @@ export function MagicStones({ onCharacterStep }: any) {
       {gameContext?.map.stones.map((s, i) => {
         return (
           <MagicStone
+            key={i}
             position={new Vector3(s[0] * 10, 0.2, s[1] * 10)}
             radius={3}
             onCharacterStep={() => {

@@ -16,11 +16,9 @@ export function Jewel(props) {
   const { map } = gameContext;
 
   const onCollisionEnter = ({ other }) => {
-    console.log("Jewel collected");
-    gameContext.setGameState("completedLevel");
+    gameContext.endCurrentLevel();
   };
   const position = new Vector3(10 * map.end[0], 2, 10 * map.end[1]);
-  console.log("Jewel position", position);
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -33,7 +31,7 @@ export function Jewel(props) {
       />
 
       <BallCollider
-        args={[5]}
+        args={[2.5]}
         position={position}
         onIntersectionEnter={onCollisionEnter}
         sensor
