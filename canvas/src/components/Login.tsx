@@ -5,6 +5,7 @@ import { WalletContext } from "../context/Provider";
 import { web3auth } from "../App";
 import { GameContext } from "../context/Game";
 import { RollupInterface } from "../services/RollupInterface";
+import { Temple } from "./Temple";
 
 export function LoginPage() {
   const walletContext = useContext(WalletContext);
@@ -58,28 +59,44 @@ export function LoginPage() {
 
   return (
     <div className="screen">
-      <div className="flex flex-col items-start justify-start">
-        <div className="flex flex-row items-center justify-start">
-          <p className="text">Welcome to </p>
-          <h1 className="header">Temple of Satoshi</h1>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100",
+        }}
+      >
+        {/* Left side: Text content */}
+        <div className="flex flex-col items-start justify-start w-1/2">
+          <div className="flex flex-row items-center justify-start">
+            <p className="text">Welcome to </p>
+            <h1 className="header">Temple of Satoshi</h1>
+          </div>
+          <p className="text">
+            You are an adventurer looking to collect a bounty from the temple.
+            This bounty is in the form of a jewel. It will unlock unfathomable
+            riches and power.
+          </p>
+          <p className="text">
+            You must navigate through the temple, stepping on magic stones and
+            opening barriers until you find the jewel.
+          </p>
+          <p className="text">
+            You must try to collect the jewel in the shortest possible time as
+            there are other adventurers trying to beat you to it!
+          </p>
+          <div className="flex flex-row">
+            <button onClick={login} className="button button-large">
+              Get Started
+            </button>
+          </div>
         </div>
-        <p className="text">
-          You are an adventurer looking to collect a bounty from the temple.
-          This bounty is in the form of a jewel. It will unlock unfathomable
-          riches and power. You must navigate through the temple, stepping on
-          magic stones and opening barriers until you find the jewel.
-        </p>
-        <p className="text">
-          You must try to collect the jewel in the shortest possible time as
-          there are other adventurers trying to beat you to it!
-        </p>
-        <div
-          className="flex flex-row 
-        "
-        >
-          <button onClick={login} className="button button-large">
-            Get Started
-          </button>{" "}
+
+        {/* Right side: Image */}
+        <div className="flex justify-center items-center w-1/2">
+          <img src="/temple_img.png" alt="Temple" className="temple-image" />
         </div>
       </div>
     </div>

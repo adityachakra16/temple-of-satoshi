@@ -15,6 +15,8 @@ import { WalletProvider } from "./context/Provider";
 import { GlobalProvider } from "./context/Global";
 import Timer from "./components/Timer";
 import LogoutButton from "./components/Logout";
+import PauseButton from "./components/Pause";
+import { useEffect } from "react";
 
 const clientId =
   "BBN9KFWfQcpmnwUVWZ_gKZNei_1KtuPB6x2gK9FBgm3XtspgKhncQYlk01X6WNv33mVZfHqy5c45sCG8abYUUJY"; // get from https://dashboard.web3auth.io
@@ -51,9 +53,13 @@ function App() {
       <GlobalProvider>
         <WalletProvider>
           <GameProvider>
-            <Experience />
-            <Timer />
-            <LogoutButton onLogout={() => {}} />
+            {/* <div className="ui-layer">
+              <LogoutButton onLogout={() => {}} />
+            </div> */}
+            <div id="canvas-container">
+              <Experience />
+            </div>
+            {/* <PauseButton /> */}
           </GameProvider>
         </WalletProvider>
       </GlobalProvider>
