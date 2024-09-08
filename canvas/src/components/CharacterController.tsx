@@ -68,9 +68,9 @@ export const CharacterController = () => {
   };
 
   useEffect(() => {
-    if (!gameContext.respawnIndex) return;
+    if (!characterContext.respawnIndex) return;
     resetCharacterPosition();
-  }, [gameContext?.respawnIndex]);
+  }, [characterContext?.respawnIndex]);
 
   useEffect(() => {
     const onMouseDown = (e) => {
@@ -174,12 +174,19 @@ export const CharacterController = () => {
     }
 
     if (characterContext)
-      characterContext.recordCharacterMovements([
-        get().forward ? 1 : 0,
-        get().backward ? 1 : 0,
-        get().left ? 1 : 0,
-        get().right ? 1 : 0,
-      ]);
+      characterContext.recordCharacterMovements({
+        position: rb.current?.translation(),
+        rotation: character.current.rotation.y,
+        animation: animation,
+        input: {
+          forward: get().forward ? 1 : 0,
+          backward: get().backward ? 1 : 0,
+          left: get().left ? 1 : 0,
+          right: get().right ? 1 : 0,
+          run: get().run ? 1 : 0,
+        },
+        isClicking: isClicking.current,
+      });
   });
 
   return (

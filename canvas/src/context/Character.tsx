@@ -11,13 +11,49 @@ type MapType = {
 };
 
 interface CharacterContextType {
-  characterMovements: [number, number, number, number][][]; // forward, backward, left, right
+  characterMovements: {
+    position: any;
+    rotation: number;
+    animation: string;
+    input: {
+      forward: boolean;
+      backward: boolean;
+      left: boolean;
+      right: boolean;
+    };
+    isClicking: boolean;
+  }[][]; // forward, backward, left, right
   setCharacterMovements: (
-    movement: [number, number, number, number][][]
+    movement: {
+      position: [number, number];
+      rotation: number;
+      animation: string;
+      input: {
+        forward: boolean;
+        backward: boolean;
+        left: boolean;
+        right: boolean;
+      };
+      isClicking: boolean;
+    }[][]
   ) => void;
-  recordCharacterMovements: (
-    movement: [number, number, number, number]
-  ) => void;
+  recordCharacterMovements: (movement: {
+    position: [number, number];
+    rotation: number;
+    animation: string;
+    input: {
+      forward: boolean;
+      backward: boolean;
+      left: boolean;
+      right: boolean;
+    };
+    isClicking: boolean;
+  }) => void;
+  respawnIndex: number;
+  setRespawnIndex: (index: number) => void;
+  respawn: () => void;
+  respawnTimer: number;
+  setRespawnTimer: (timer: number) => void;
 }
 
 export const CharacterContext = createContext<CharacterContextType | null>(
@@ -27,16 +63,38 @@ export const CharacterContext = createContext<CharacterContextType | null>(
 export const CharacterProvider = ({ children }: any) => {
   // Positions of all the respawning characters
   const [characterMovements, setCharacterMovements] = useState<
-    [number, number, number, number][][]
+    {
+      position: [number, number];
+      rotation: number;
+      animation: string;
+      input: {
+        forward: boolean;
+        backward: boolean;
+        left: boolean;
+        right: boolean;
+      };
+      isClicking: boolean;
+    }[][]
   >([]);
+
+  const [respawnIndex, setRespawnIndex] = useState(0);
+  const [respawnTimer, setRespawnTimer] = useState(10);
   const gameContext = useContext(GameContext);
   // x, z, rotation
-  const recordCharacterMovements = (
-    movement: [number, number, number, number]
-  ) => {
+  const recordCharacterMovements = (movement: {
+    position: [number, number];
+    rotation: number;
+    animation: string;
+    input: {
+      forward: boolean;
+      backward: boolean;
+      left: boolean;
+      right: boolean;
+    };
+    isClicking: boolean;
+  }) => {
     // console.log("Recording movement", movement);
     if (!gameContext) return;
-    const { respawnIndex } = gameContext;
     setCharacterMovements((prev) => {
       const newMovements = prev.slice();
       newMovements[respawnIndex] = newMovements[respawnIndex] || [];
@@ -45,12 +103,33 @@ export const CharacterProvider = ({ children }: any) => {
     });
   };
 
+  const respawn = () => {
+    // Reset the player position
+    // Reset the timer
+    setRespawnIndex((prev) => prev + 1);
+    setRespawnTimer(10);
+  };
+
+  useEffect(() => {
+    if (respawnTimer > 0) {
+      const timer = setTimeout(() => setRespawnTimer(respawnTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      respawn();
+    }
+  }, [respawnTimer]);
+
   return (
     <CharacterContext.Provider
       value={{
         characterMovements,
         setCharacterMovements,
         recordCharacterMovements,
+        respawnIndex,
+        setRespawnIndex,
+        respawn,
+        respawnTimer,
+        setRespawnTimer,
       }}
     >
       {children}
