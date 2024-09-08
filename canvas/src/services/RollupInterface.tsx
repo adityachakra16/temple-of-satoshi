@@ -64,7 +64,12 @@ export const RollupInterface = () => {
     }
   };
 
-  const startLevel = async (level: number, width: number, height: number) => {
+  const startLevel = async (
+    level: number,
+    width: number,
+    height: number,
+    map: any
+  ) => {
     try {
       const timestamp = Date.now();
       const res = await submitAction("startLevel", {
@@ -72,6 +77,7 @@ export const RollupInterface = () => {
         level,
         width,
         height,
+        map: JSON.stringify(map),
       });
 
       if (res) {
@@ -85,7 +91,7 @@ export const RollupInterface = () => {
     }
   };
 
-  const endLevel = async (levelId: string) => {
+  const endLevel = async (levelId: string, respawns: number) => {
     try {
       const timestamp = Date.now();
       const gameInputs = JSON.stringify({
@@ -96,6 +102,7 @@ export const RollupInterface = () => {
         timestamp,
         levelId,
         gameInputs,
+        respawns,
       });
       console.log({ res });
 
@@ -117,5 +124,23 @@ export const RollupInterface = () => {
     }
   };
 
-  return { getInfo, submitAction, startLevel, endLevel, fetchLeaderboard };
+  const generateMap = async (level: number) => {
+    try {
+      const res = await fetch(`http://localhost:3210/map/${level}`);
+      const data = await res.json();
+      console.log({ data });
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return {
+    getInfo,
+    submitAction,
+    startLevel,
+    endLevel,
+    fetchLeaderboard,
+    generateMap,
+  };
 };

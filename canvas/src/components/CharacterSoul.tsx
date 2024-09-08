@@ -43,7 +43,7 @@ export const CharacterSouls: React.FC = () => {
           frameCountRef.current % movementsInCurrentRespawn.length;
         const movement = movementsInCurrentRespawn[frameIndex];
 
-        if (movement) {
+        if (movement && soul?.position) {
           // Update soul position
           soul.position.copy(movement.position);
           soul.position.y += 0.25; // Lift the cone slightly above the ground

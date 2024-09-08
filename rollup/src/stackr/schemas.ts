@@ -6,10 +6,12 @@ export const StartLevelSchema = new ActionSchema("startLevel", {
   level: SolidityType.UINT,
   width: SolidityType.UINT,
   height: SolidityType.UINT,
+  map: SolidityType.STRING,
 });
 
 export const EndLevelSchema = new ActionSchema("endLevel", {
   levelId: SolidityType.STRING,
   timestamp: SolidityType.UINT,
   gameInputs: SolidityType.STRING,
+  respawns: SolidityType.UINT,
 });

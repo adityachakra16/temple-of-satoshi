@@ -33,21 +33,17 @@ interface GameContextType {
       | "completedLevel"
       | "leaderboard"
   ) => void;
-  respawn: () => void;
-  respawnIndex: number;
-  setRespawnIndex: (index: number) => void;
-  respawnTimer: number;
-  setRespawnTimer: (timer: number) => void;
   currentLevelId: string | null;
   setCurrentLevelId: (levelId: string | null) => void;
   startNewLevel: () => void;
-  endCurrentLevel: () => void;
+  endCurrentLevel: (respawns: number) => void;
+  startAgain: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children }: any) => {
-  const { startLevel, endLevel } = RollupInterface();
+  const { startLevel, endLevel, generateMap } = RollupInterface();
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentLevelId, setCurrentLevelId] = useState<string | null>(null);
@@ -57,64 +53,18 @@ export const GameProvider = ({ children }: any) => {
     "notStarted" | "playing" | "won" | "lost" | "completedLevel" | "leaderboard"
   >("notStarted");
 
-  // Positions of all the respawning characters
-  const [characterMovements, setCharacterMovements] = useState<
-    [number, number, number, number][][]
-  >([]);
-  const [respawnIndex, setRespawnIndex] = useState(0);
-  const [respawnTimer, setRespawnTimer] = useState(10);
-
-  const fetchMap = () => {
-    setMap({
-      start: [0, 0],
-      end: [9, 9],
-      barriers: [
-        // [4, 5],
-        [2, 2],
-        [7, 8],
-      ],
-      stones: [
-        [2, 2],
-        [6, 8],
-      ],
-      path: [
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [2, 1],
-        [2, 2],
-        [2, 3],
-        [3, 3],
-        [4, 3],
-        [4, 4],
-        [4, 5],
-        [5, 5],
-        [6, 5],
-        [6, 6],
-        [6, 7],
-        [6, 8],
-        [7, 8],
-        [8, 8],
-        [9, 8],
-        [9, 9],
-      ],
-    });
+  const fetchMap = async () => {
+    const map = await generateMap(currentLevel);
+    setMap(map);
     setVisibleBarriers([true, true]);
   };
 
-  const respawn = () => {
-    // Reset the player position
-    // Reset the timer
-    setRespawnIndex((prev) => prev + 1);
-    setRespawnTimer(0);
-  };
-
-  const endCurrentLevel = async () => {
+  const endCurrentLevel = async (respawns: number) => {
     setGameState("completedLevel");
     if (!currentLevelId) return;
     console.log("Ending level", currentLevelId);
 
-    const endLevelRes = await endLevel(currentLevelId);
+    const endLevelRes = await endLevel(currentLevelId, respawns);
     if (!endLevelRes) {
       console.error("Error ending level");
       return;
@@ -126,16 +76,31 @@ export const GameProvider = ({ children }: any) => {
     const startLevelRes = await startLevel(
       newLevel,
       window.innerWidth,
-      window.innerHeight
+      window.innerHeight,
+      map
     );
     console.log({ startLevelRes });
     if (!startLevelRes) {
       console.error("Error starting level");
       return;
     }
-    setRespawnIndex(0);
-    setRespawnTimer(10);
     setCurrentLevel(newLevel);
+    setCurrentLevelId(startLevelRes.levelId);
+    setGameState("playing");
+  };
+
+  const startAgain = async () => {
+    const startLevelRes = await startLevel(
+      currentLevel,
+      window.innerWidth,
+      window.innerHeight,
+      map
+    );
+    console.log({ startLevelRes });
+    if (!startLevelRes) {
+      console.error("Error starting level");
+      return;
+    }
     setCurrentLevelId(startLevelRes.levelId);
     setGameState("playing");
   };
@@ -143,15 +108,6 @@ export const GameProvider = ({ children }: any) => {
   useEffect(() => {
     fetchMap();
   }, [currentLevel]);
-
-  useEffect(() => {
-    if (respawnTimer > 0) {
-      const timer = setTimeout(() => setRespawnTimer(respawnTimer - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      respawn();
-    }
-  }, [respawnTimer]);
 
   return (
     <GameContext.Provider
@@ -165,15 +121,11 @@ export const GameProvider = ({ children }: any) => {
         setVisibleBarriers,
         gameState,
         setGameState,
-        respawn,
-        respawnIndex,
-        setRespawnIndex,
-        respawnTimer,
-        setRespawnTimer,
         currentLevelId,
         setCurrentLevelId,
         startNewLevel,
         endCurrentLevel,
+        startAgain,
       }}
     >
       {children}

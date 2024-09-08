@@ -9,6 +9,7 @@ import express from "express";
 import { stackrConfig } from "../stackr.config";
 import { StartLevelSchema, EndLevelSchema } from "./stackr/schemas";
 import { machine, MACHINE_ID } from "./stackr/machine";
+import { mockMaps } from "./constants";
 
 const PORT = process.env.PORT || 3210;
 
@@ -67,29 +68,20 @@ const main = async () => {
 
   app.get("/leaderboard", async (_req, res) => {
     const { state } = stateMachine;
-    const sortedScores = [...state.games].sort(
-      (a, b) => b.endTime - b.startTime - (a.endTime - a.startTime)
+    const sortedPlayers = [...state.players].sort(
+      (a, b) =>
+        a.scores.reduce((acc, score) => acc + score, 0) -
+        b.scores.reduce((acc, score) => acc + score, 0)
     );
     // make sure to return one entry per player
-    const players = new Set<string>();
-
-    // TODO: store this in app instance later
-    const topTen = sortedScores
-      .filter((game) => {
-        if (players.has(game.player)) {
-          return false;
-        }
-        players.add(game.player);
-        return true;
-      })
-      .slice(0, 10);
-
-    const leaderboard = await Promise.all(
-      topTen.map(async (game) => ({
-        address: game.player,
-        timeTaken: game.endTime - game.startTime,
-      }))
-    );
+    const leaderboard = sortedPlayers.map((player) => {
+      const scores = player.scores.reduce((acc, score) => acc + score, 0);
+      return {
+        player: player.id,
+        scores,
+        levelsCompleted: player.levelsCompleted,
+      };
+    });
 
     return res.json(leaderboard);
   });
@@ -187,6 +179,12 @@ const main = async () => {
     });
 
     return res.send(games);
+  });
+
+  app.get("/map/:levelId", async (req, res) => {
+    const { levelId } = req.params;
+    const map = mockMaps[0];
+    return res.send(map);
   });
 
   app.listen(PORT, () => {
