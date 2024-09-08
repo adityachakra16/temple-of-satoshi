@@ -9,12 +9,13 @@ import { Path } from "./Path";
 import { Barriers } from "./Barrier";
 import { MagicStones } from "./MagicStone";
 import { CharacterController } from "./CharacterController";
-import { useContext, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { GameContext } from "../context/Game";
 import { LoginPage } from "./Login";
 import { LevelComplete } from "./LevelCompletion";
 import { Leaderboard } from "./Leaderboard";
-import Timer from "./Timer";
+import { CharacterSouls } from "./CharacterSoul";
+import { CharacterProvider } from "../context/Character";
 
 export function Experience() {
   const characterRef = useRef();
@@ -46,7 +47,7 @@ export function Experience() {
       ]}
     >
       <Canvas shadows style={{ width: "100vw", height: "100vh" }}>
-        <Perf position="top-left" />
+        {/* <Perf position="top-left" /> */}
 
         <Sky sunPosition={[100, 20, 100]} />
         <ambientLight intensity={0.4} />
@@ -74,13 +75,9 @@ export function Experience() {
               console.log("character stepped!!!");
             }}
           />
+          <CharacterSouls />
         </Physics>
-        <Timer
-          duration={60}
-          onTimeUp={() => {
-            gameContext.respawn();
-          }}
-        />
+
         <Camera characterRef={characterRef} />
       </Canvas>
     </KeyboardControls>

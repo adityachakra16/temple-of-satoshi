@@ -9,6 +9,7 @@ import { degToRad } from "three/src/math/MathUtils.js";
 import { Character } from "./Character";
 import { GameContext } from "../context/Game";
 import { useContext } from "react";
+import { CharacterContext } from "../context/Character";
 
 const normalizeAngle = (angle) => {
   while (angle > Math.PI) angle -= 2 * Math.PI;
@@ -33,6 +34,7 @@ const lerpAngle = (start, end, t) => {
 
 export const CharacterController = () => {
   const gameContext = useContext(GameContext);
+  const characterContext = useContext(CharacterContext);
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
     {
@@ -171,12 +173,13 @@ export const CharacterController = () => {
       camera.lookAt(cameraLookAt.current);
     }
 
-    // gameContext.recordCharacterMovements([
-    //   get().forward ? 1 : 0,
-    //   get().backward ? 1 : 0,
-    //   get().left ? 1 : 0,
-    //   get().right ? 1 : 0,
-    // ]);
+    if (characterContext)
+      characterContext.recordCharacterMovements([
+        get().forward ? 1 : 0,
+        get().backward ? 1 : 0,
+        get().left ? 1 : 0,
+        get().right ? 1 : 0,
+      ]);
   });
 
   return (
