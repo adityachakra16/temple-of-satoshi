@@ -16,6 +16,8 @@ import { LevelComplete } from "./LevelCompletion";
 import { Leaderboard } from "./Leaderboard";
 import { CharacterSouls } from "./CharacterSoul";
 import { CharacterProvider } from "../context/Character";
+import Timer from "./Timer";
+import { Paused } from "./PausedPage";
 
 export function Experience() {
   const characterRef = useRef();
@@ -36,6 +38,9 @@ export function Experience() {
     return <Leaderboard />;
   }
 
+  if (gameContext.gameState === "paused") {
+    return <Paused />;
+  }
   return (
     <KeyboardControls
       map={[
@@ -67,15 +72,18 @@ export function Experience() {
         <Physics gravity={[0, -30, 0]}>
           <Path />
           <Ground />
-          <CharacterController />
-          <Jewel />
           <Barriers />
-          <MagicStones
-            onCharacterStep={() => {
-              console.log("character stepped!!!");
-            }}
-          />
-          <CharacterSouls />
+
+          <CharacterProvider>
+            <CharacterController />
+            <MagicStones
+              onCharacterStep={() => {
+                console.log("character stepped!!!");
+              }}
+            />
+            <CharacterSouls />
+            <Jewel />
+          </CharacterProvider>
         </Physics>
 
         <Camera characterRef={characterRef} />

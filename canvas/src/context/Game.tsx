@@ -23,7 +23,8 @@ interface GameContextType {
     | "won"
     | "lost"
     | "completedLevel"
-    | "leaderboard";
+    | "leaderboard"
+    | "paused";
   setGameState: (
     gameState:
       | "notStarted"
@@ -32,6 +33,7 @@ interface GameContextType {
       | "lost"
       | "completedLevel"
       | "leaderboard"
+      | "paused"
   ) => void;
   currentLevelId: string | null;
   setCurrentLevelId: (levelId: string | null) => void;
@@ -50,13 +52,21 @@ export const GameProvider = ({ children }: any) => {
   const [map, setMap] = useState({} as MapType);
   const [visibleBarriers, setVisibleBarriers] = useState<boolean[]>([]);
   const [gameState, setGameState] = useState<
-    "notStarted" | "playing" | "won" | "lost" | "completedLevel" | "leaderboard"
+    | "notStarted"
+    | "playing"
+    | "won"
+    | "lost"
+    | "completedLevel"
+    | "leaderboard"
+    | "paused"
   >("notStarted");
 
   const fetchMap = async () => {
     const map = await generateMap(currentLevel);
     setMap(map);
-    setVisibleBarriers([true, true]);
+    setVisibleBarriers(map.barriers.map(() => true));
+
+    return map;
   };
 
   const endCurrentLevel = async (respawns: number) => {
@@ -73,11 +83,12 @@ export const GameProvider = ({ children }: any) => {
 
   const startNewLevel = async () => {
     const newLevel = currentLevel + 1;
+    const generatedMap = await fetchMap();
     const startLevelRes = await startLevel(
       newLevel,
       window.innerWidth,
       window.innerHeight,
-      map
+      generatedMap
     );
     console.log({ startLevelRes });
     if (!startLevelRes) {

@@ -3,35 +3,15 @@ import { GameContext } from "../context/Game";
 import { CharacterContext } from "../context/Character";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { RigidBody, BallCollider } from "@react-three/rapier";
 
 export const CharacterSouls: React.FC = () => {
-  const gameContext = useContext(GameContext);
   const characterContext = useContext(CharacterContext);
-  const soulRefs = useRef<THREE.Mesh[]>([]);
+  const soulRefs = characterContext?.soulRefs;
   const frameCountRef = useRef(0);
 
-  useEffect(() => {
-    if (!characterContext) return;
-
-    // Initialize souls
-    soulRefs.current = characterContext.characterMovements.map(() => {
-      const mesh = new THREE.Mesh(
-        new THREE.ConeGeometry(0.25, 0.5, 3),
-        new THREE.MeshStandardMaterial({
-          color: "orange",
-          transparent: true,
-          opacity: 0.7,
-        })
-      );
-      return mesh;
-    });
-
-    // Reset frame count when respawn index changes
-    frameCountRef.current = 0;
-  }, [characterContext?.respawnIndex]);
-
   useFrame(() => {
-    if (!gameContext || !characterContext) return;
+    if (!soulRefs) return;
 
     characterContext.characterMovements.forEach(
       (movementsInCurrentRespawn, index) => {
@@ -43,14 +23,9 @@ export const CharacterSouls: React.FC = () => {
           frameCountRef.current % movementsInCurrentRespawn.length;
         const movement = movementsInCurrentRespawn[frameIndex];
 
-        if (movement && soul?.position) {
+        if (movement && movement.position) {
           // Update soul position
           soul.position.copy(movement.position);
-          soul.position.y += 0.25; // Lift the cone slightly above the ground
-
-          // Update soul rotation
-          soul.rotation.y = movement.rotation + Math.PI / 2; // Adjust rotation to match character facing direction
-
           // Optionally, change color or scale based on animation
           if (movement.animation === "CharacterArmature|Run") {
             soul.scale.setScalar(1.2);
@@ -67,12 +42,33 @@ export const CharacterSouls: React.FC = () => {
     frameCountRef.current++;
   });
 
-  if (!characterContext) return null;
+  useEffect(() => {
+    if (!soulRefs) return;
+
+    // Reset the frame count when the respawn index changes
+    frameCountRef.current = 0;
+
+    // Reset the position of all souls
+    soulRefs.current.forEach((soul) => {
+      soul.position.set(0, 0, 0);
+    });
+  }, [characterContext?.respawnIndex]);
+
+  if (!soulRefs) return null;
 
   return (
     <>
       {soulRefs.current.map((soul, index) => (
-        <primitive key={index} object={soul} />
+        <RigidBody
+          key={index}
+          position={soul.position}
+          collider={false}
+          type="kinematicPosition" // Prevents souls from interacting physically
+        >
+          <primitive key={index} object={soul} />
+          {/* Add a BallCollider as a sensor to allow for collision detection */}
+          <BallCollider args={[1]} sensor /> {/* Make it a sensor */}
+        </RigidBody>
       ))}
     </>
   );

@@ -10,6 +10,7 @@ import { Character } from "./Character";
 import { GameContext } from "../context/Game";
 import { useContext } from "react";
 import { CharacterContext } from "../context/Character";
+import Timer from "./Timer";
 
 const normalizeAngle = (angle) => {
   while (angle > Math.PI) angle -= 2 * Math.PI;
@@ -33,7 +34,6 @@ const lerpAngle = (start, end, t) => {
 };
 
 export const CharacterController = () => {
-  const gameContext = useContext(GameContext);
   const characterContext = useContext(CharacterContext);
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED } = useControls(
     "Character Control",
@@ -48,9 +48,9 @@ export const CharacterController = () => {
       },
     }
   );
-  const rb = useRef();
-  const container = useRef();
   const character = useRef();
+  const container = useRef();
+  const { characterRef: rb } = characterContext;
 
   const [animation, setAnimation] = useState("CharacterArmature|Idle");
   const characterRotationTarget = useRef(0);
@@ -71,26 +71,6 @@ export const CharacterController = () => {
     if (!characterContext.respawnIndex) return;
     resetCharacterPosition();
   }, [characterContext?.respawnIndex]);
-
-  useEffect(() => {
-    const onMouseDown = (e) => {
-      isClicking.current = true;
-    };
-    const onMouseUp = (e) => {
-      isClicking.current = false;
-    };
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mouseup", onMouseUp);
-    // touch
-    document.addEventListener("touchstart", onMouseDown);
-    document.addEventListener("touchend", onMouseUp);
-    return () => {
-      document.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mouseup", onMouseUp);
-      document.removeEventListener("touchstart", onMouseDown);
-      document.removeEventListener("touchend", onMouseUp);
-    };
-  }, []);
 
   useFrame(({ camera, mouse }) => {
     if (rb.current) {
@@ -194,6 +174,7 @@ export const CharacterController = () => {
       <group ref={container}>
         <group ref={cameraTarget} position-z={1.5} />
         <group ref={cameraPosition} position-y={4} position-z={-4} />
+        <Timer />
         <group ref={character}>
           <Character scale={2} position-y={0.1} animation={animation} />
         </group>
