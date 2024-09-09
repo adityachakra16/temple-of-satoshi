@@ -10,7 +10,7 @@ export const RollupInterface = () => {
 
   const getInfo = async () => {
     try {
-      const res = await fetch("http://localhost:3210/info");
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/info`);
       const data = await res.json();
       console.log({
         info: data,
@@ -41,18 +41,21 @@ export const RollupInterface = () => {
       );
       const ethAddress = await walletContext.getEthAddress();
       console.log({ signedMessage, ethAddress });
-      const res = await fetch(`http://localhost:3210/${transition}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          transition,
-          inputs,
-          signature: signedMessage,
-          msgSender: ethAddress,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/${transition}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            transition,
+            inputs,
+            signature: signedMessage,
+            msgSender: ethAddress,
+          }),
+        }
+      );
       console.log({ res });
       const data = await res.json();
       if (data.isOk)
@@ -114,7 +117,7 @@ export const RollupInterface = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const res = await fetch("http://localhost:3210/leaderboard");
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/leaderboard`);
       console.log({ res });
       const data = await res.json();
 
@@ -126,7 +129,8 @@ export const RollupInterface = () => {
 
   const generateMap = async (level: number) => {
     try {
-      const res = await fetch(`http://localhost:3210/map/${level}`);
+      console.log(process.env.REACT_APP_API_URL);
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/map/${level}`);
       const data = await res.json();
       console.log({ data });
       return data;
