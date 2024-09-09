@@ -82,7 +82,7 @@ export const CharacterProvider = ({ children }: any) => {
   const soulRefs = useRef<THREE.Mesh[]>([]);
   const characterRef = useRef<THREE.Mesh>();
   const [respawnIndex, setRespawnIndex] = useState(0);
-  const [respawnTimer, setRespawnTimer] = useState(20);
+  const [respawnTimer, setRespawnTimer] = useState(0);
   const gameContext = useContext(GameContext);
   // x, z, rotation
   const recordCharacterMovements = (movement: {
@@ -111,7 +111,7 @@ export const CharacterProvider = ({ children }: any) => {
     // Reset the player position
     // Reset the timer
     setRespawnIndex((prev) => prev + 1);
-    setRespawnTimer(20);
+    setRespawnTimer(0);
   };
 
   useEffect(() => {

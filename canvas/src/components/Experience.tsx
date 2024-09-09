@@ -75,15 +75,15 @@ export function Experience() {
           <Temple />
           <Ground />
           <Barriers />
-
+          <MagicStones
+            onCharacterStep={() => {
+              console.log("character stepped!!!");
+            }}
+          />
           <CharacterProvider>
             <CharacterController />
-            <MagicStones
-              onCharacterStep={() => {
-                console.log("character stepped!!!");
-              }}
-            />
-            <CharacterSouls />
+
+            {/* <CharacterSouls /> */}
             <Jewel />
           </CharacterProvider>
         </Physics>

@@ -18,11 +18,11 @@ export function MagicStone({
   const [color, setColor] = useState("lightgreen");
   const circleRef = useRef();
   const gameContext = useContext(GameContext);
-  const characterContext = useContext(CharacterContext);
+  // const characterContext = useContext(CharacterContext);
   const stoneRef = useRef<THREE.Mesh>(null);
 
-  const soulRefs = characterContext?.soulRefs;
-  const { characterRef: characterRB } = characterContext; // Access character's RigidBody ref
+  // const soulRefs = characterContext?.soulRefs;
+  // const { characterRef: characterRB } = characterContext; // Access character's RigidBody ref
   const onCollisionEnter = ({ other }: any) => {
     console.log({ other });
     if (other.rigidBody && onCharacterStep) {
@@ -38,47 +38,47 @@ export function MagicStone({
     }
   };
 
-  const checkSoulAndCharacterProximity = () => {
-    if (!soulRefs?.current) return;
-    let isColliding = false;
+  // const checkSoulAndCharacterProximity = () => {
+  //   if (!soulRefs?.current) return;
+  //   let isColliding = false;
 
-    soulRefs.current.forEach((soul: THREE.Mesh) => {
-      if (!soul) return;
+  //   soulRefs.current.forEach((soul: THREE.Mesh) => {
+  //     if (!soul) return;
 
-      const distance = soul.position.distanceTo(position);
+  //     const distance = soul.position.distanceTo(position);
 
-      // Collision detected if within a certain range
-      if (distance < radius) {
-        isColliding = true;
-        setColor("darkgreen");
-        if (onCharacterStep) onCharacterStep();
-      }
-    });
+  //     // Collision detected if within a certain range
+  //     if (distance < radius) {
+  //       isColliding = true;
+  //       setColor("darkgreen");
+  //       if (onCharacterStep) onCharacterStep();
+  //     }
+  //   });
 
-    if (characterRB?.current) {
-      const characterPosition = new Vector3(
-        characterRB.current.translation().x,
-        characterRB.current.translation().y,
-        characterRB.current.translation().z
-      );
-      const d = characterPosition.distanceTo(position);
+  //   if (characterRB?.current) {
+  //     const characterPosition = new Vector3(
+  //       characterRB.current.translation().x,
+  //       characterRB.current.translation().y,
+  //       characterRB.current.translation().z
+  //     );
+  //     const d = characterPosition.distanceTo(position);
 
-      if (d < radius) {
-        isColliding = true;
-        setColor("darkgreen");
-        if (onCharacterStep) onCharacterStep();
-      }
-    }
+  //     if (d < radius) {
+  //       isColliding = true;
+  //       setColor("darkgreen");
+  //       if (onCharacterStep) onCharacterStep();
+  //     }
+  //   }
 
-    if (!isColliding) {
-      setColor("lightgreen");
-      if (onCharacterExit) onCharacterExit();
-    }
-  };
+  //   if (!isColliding) {
+  //     setColor("lightgreen");
+  //     if (onCharacterExit) onCharacterExit();
+  //   }
+  // };
 
-  useFrame(() => {
-    checkSoulAndCharacterProximity(); // Manually check soul proximity every frame
-  });
+  // useFrame(() => {
+  //   checkSoulAndCharacterProximity(); // Manually check soul proximity every frame
+  // });
 
   return (
     <>
